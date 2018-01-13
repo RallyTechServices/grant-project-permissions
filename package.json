@@ -1,0 +1,33 @@
+{
+  "name": "@catechservices/grant-project-permissions",
+  "version": "0.0.1",
+  "description": "Grants project permissions when a new project/user is created",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node app/index.js grant-project-permissions",
+    "stop": "killall -SIGINT grant-project-permissions"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arajaramanca/grant-project-permissions.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/arajaramanca/grant-project-permissions/issues"
+  },
+  "homepage": "https://github.com/arajaramanca/grant-project-permissions#readme",
+  "dependencies": {
+    "body-parser": "^1.17.1",
+    "express": "^4.15.2",
+    "jasmine-node": "^1.14.5",
+    "log4js": "^1.1.1",
+    "rally": "2.1.2"
+  },
+  "devDependencies": {
+    "grunt": "~0.4.5",
+    "grunt-cli": "0.1.6",
+    "grunt-contrib-watch": "1.0.0",
+    "grunt-exec": "^2.0.0"
+  }
+}
