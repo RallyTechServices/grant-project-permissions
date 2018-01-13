@@ -1,0 +1,9 @@
+node_modules
+jspm_packages
+*.log*
+npm-debug.log*
+_SpecRunner.html
+app/test.js
+app/__test*
+.grunt
+.npm
