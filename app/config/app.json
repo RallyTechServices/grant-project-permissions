@@ -1,12 +1,17 @@
 {
-	"server": {
-		"port": 3000
-	},
-	"rally":{
-        "apiKey": "_axDtOkNATeif0j61oKDcnAjxaPXRTkqmfgypbUIf1Q"
-    },
-	"subscription": {
-		"id": 209,
-		"workspace_uuid":"3c73ba14-de54-4fd5-846d-0d668592d3db"
+	"cronTimer": "* * * * *",
+	"roles": {
+		"VP" : {
+			"access" : "Viewer",
+			"excludeRestricted" : false
+		},
+		"Director" : {
+			"access" : "Viewer",
+			"excludeRestricted" : false
+		},
+		"AgileCoach" : {
+			"access" : "Admin",
+			"excludeRestricted" : true
+		}
 	}
 }
