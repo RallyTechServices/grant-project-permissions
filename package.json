@@ -22,6 +22,7 @@
     "express": "^4.15.2",
     "jasmine-node": "^1.14.5",
     "log4js": "^1.1.1",
+    "node-cron": "^1.2.1",
     "rally": "2.1.2"
   },
   "devDependencies": {

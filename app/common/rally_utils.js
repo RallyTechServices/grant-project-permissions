@@ -1,9 +1,9 @@
-const app_config = require('../config/app.json')
+//const app_config = require('../config/app.json')
 
 const log = require('log4js').getLogger("rally_utils");
 
 const rally = require('rally'),
-    restApi = rally(app_config.rally),
+    restApi = rally(),
     refUtils = rally.util.ref,
     queryUtils = rally.util.query;
 
