@@ -14,7 +14,7 @@ log4js.configure('app/config/log4js.json');
 
 //use a timer to pass the datetime
 //cron.schedule(app_config.cronTimer, function(){
- console.log('running a task every min');
+// console.log('running a task every min');
 
  var d = new Date();
  d.setDate(d.getDate()-1);
