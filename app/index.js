@@ -1,25 +1,40 @@
 process.title = process.argv[2];
-//const bodyParser = require('body-parser')
-//const express = require('express')  
+var _ = require('lodash');
+
 const handler = require('./handler')
 const app_config = require('./config/app.json')
 var cron = require('node-cron');
-
-//const app = express()
 
 // log4js Logger
 const log4js = require('log4js');
 log4js.configure('app/config/log4js.json');
 
+var log = log4js.getLogger('index');
 
-//use a timer to pass the datetime
-//cron.schedule(app_config.cronTimer, function(){
-// console.log('running a task every min');
+const run = () => {
+	var d = new Date();
+	var days = app_config.days || 1;
+	d.setDate(d.getDate() - days);
+	console.log('Time (ISO) to check from ',d.toISOString(), 'Days Prior: ',days);
 
- var d = new Date();
- d.setDate(d.getDate()-1);
- console.log('Time',d.toISOString());
+	handler.processNewUserPermissions(d.toISOString()).then((x) => {
+		log.info(x);
+		handler.processNewProjectPermissions(d.toISOString()).then((x) => {
+			log.info(x);
+		});
+	});
 
- handler.processPermissions(d.toISOString());
+}
 
-//});
+if(app_config.runOnce){
+	console.log('Running Once');
+	run();
+}else{
+	//use a timer 
+	console.log('Cron job started', app_config.cronTimer);
+
+	cron.schedule(app_config.cronTimer, function(){
+		run();
+	});
+}
+

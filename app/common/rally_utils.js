@@ -118,7 +118,7 @@ module.exports.getIntegrationUsers = (workspace_ref, fetch) => {
         restApi.query({
             type: 'User',
             fetch: fetch,
-            query: queryUtils.where('c_IntegrationRole', '!=', null),
+            query: queryUtils.where('c_IntegrationRole', '!=', null).and('Disabled','=',false),
                 scope: {
                    workspace: refUtils.getRelative(workspace_ref)
                 }
@@ -132,6 +132,25 @@ module.exports.getIntegrationUsers = (workspace_ref, fetch) => {
     })
 }
 
+
+module.exports.getIntegrationUsersByCreationDate = (workspace_ref, fetch,date) => {
+    return new Promise((resolve, reject) => {
+        restApi.query({
+            type: 'User',
+            fetch: fetch,
+            query: queryUtils.where('c_IntegrationRole', '!=', null).and('Disabled','=',false).and('CreationDate', '>', date),
+            scope: {
+               workspace: refUtils.getRelative(workspace_ref)
+            }
+        }, function(error, result) {
+            if(error) {
+                log.error(error)
+            } else {
+                resolve(result)
+            }
+        });
+    })
+}
 
 module.exports.createArtifact = (workspace_ref, artifact,  fetch, data) => {
 	return new Promise((resolve,reject) => {
@@ -158,9 +177,9 @@ module.exports.getProjectsByCreationDate = (workspace_ref, fetch,  date) => {
             type: 'Project',
             fetch: fetch,
             query: queryUtils.where('CreationDate', '>', date),
-                scope: {
-                   workspace: refUtils.getRelative(workspace_ref)
-                }
+            scope: {
+               workspace: refUtils.getRelative(workspace_ref)
+            }
         }, function(error, result) {
             if(error) {
                 log.error(error)
@@ -169,4 +188,34 @@ module.exports.getProjectsByCreationDate = (workspace_ref, fetch,  date) => {
             }
         });
     })
+}
+
+
+module.exports.getAllProjects = (workspace_ref, fetch) => {
+    return new Promise((resolve, reject) => {
+        restApi.query({
+            type: 'Project',
+            fetch: fetch,
+            scope: {
+               workspace: refUtils.getRelative(workspace_ref)
+            }
+        }, function(error, result) {
+            if(error) {
+                log.error(error)
+            } else {
+                resolve(result)
+            }
+        });
+    })
+}
+
+
+
+module.exports.goiya  = (text,timer) => {
+	new Promise(function(resolve) {
+		console.log('Yo',text,timer);
+		setTimeout(function() {
+			resolve(text);
+		}, timer);
+	})
 }

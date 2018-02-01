@@ -1,5 +1,7 @@
 {
-	"cronTimer": "* * * * *",
+	"runOnce":true,
+	"cronTimer": "0 0 * * *",
+	"days":1,
 	"roles": {
 		"VP" : {
 			"access" : "Viewer",
