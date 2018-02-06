@@ -9,58 +9,6 @@ const rally = require('rally'),
 
 const _ = require('lodash/core');
 
-module.exports.projectIncluded = (rule_name, top_project_names, project_uuid) => {
-
-	return new Promise((resolve, reject) => {
-	    let x = {}
-		
-		if(top_project_names.length < 1){
-			// No projects specified, no restrictions for this rule. 
-			x[rule_name] = true
-			resolve(x)
-		}
-
-		let query 
-		
-		for(i in top_project_names){
-			
-			let top_project_name = top_project_names[i]
-			if(i == 0){
-				query = queryUtils.where('Name', '=', top_project_name)
-			}else{
-				query = query.or('Name', '=', top_project_name)
-			}
-			query = query.or('Parent.Name', '=',top_project_name) 
-			query = query.or('Parent.Parent.Name', '=',top_project_name) 
-			query = query.or('Parent.Parent.Parent.Name', '=',top_project_name) 
-			query = query.or('Parent.Parent.Parent.Parent.Name', '=',top_project_name) 
-			query = query.or('Parent.Parent.Parent.Parent.Parent.Name', '=',top_project_name) 
-			query = query.or('Parent.Parent.Parent.Parent.Parent.Parent.Name', '=',top_project_name) 
-			query = query.or('Parent.Parent.Parent.Parent.Parent.Parent.Parent.Name', '=',top_project_name) 
-			query = query.or('Parent.Parent.Parent.Parent.Parent.Parent.Parent.Parent.Name', '=',top_project_name)
-		}
-
-		query = query.and('ObjectUUID','=',project_uuid)
-
-		log.info('Query String', query.toQueryString());
-
-		restApi.query({
-	        type: 'project',
-	        fetch: ['FormattedID'],
-	        query: query
-	    }, function(error, result) {
-	        if(error) {
-	        	log.error(error)
-	        } else {
-	        	log.info('result')
-	        	x[rule_name] = result.TotalResultCount > 0
-	        	resolve(x)
-	        }
-	    });
-
-	})
-}
-
 
 module.exports.getArtifactByRef = (ref,fetch) => {
 	return new Promise((resolve, reject) => {
@@ -113,12 +61,24 @@ module.exports.updateArtifact = (workspace_ref, ref,  fetch, data) => {
 	})
 }
 
-module.exports.getIntegrationUsers = (workspace_ref, fetch) => {
+module.exports.getIntegrationUsers = (workspace_ref, fetch, user_types) => {
     return new Promise((resolve, reject) => {
+        let query
+        for(i in user_types){
+
+                let type = user_types[i]
+                if(i == 0){
+                        query = queryUtils.where('c_IntegrationRole', '=', type)
+                }else{
+                        query = query.or('c_IntegrationRole', '=', type)
+                }
+        }
+
+
         restApi.query({
             type: 'User',
             fetch: fetch,
-            query: queryUtils.where('c_IntegrationRole', '!=', null).and('Disabled','=',false),
+            query: query.and('Disabled','=',false),
                 scope: {
                    workspace: refUtils.getRelative(workspace_ref)
                 }
@@ -133,12 +93,22 @@ module.exports.getIntegrationUsers = (workspace_ref, fetch) => {
 }
 
 
-module.exports.getIntegrationUsersByCreationDate = (workspace_ref, fetch,date) => {
+module.exports.getIntegrationUsersByCreationDate = (workspace_ref, fetch,date, user_types) => {
     return new Promise((resolve, reject) => {
+        let query
+        for(i in user_types){
+
+                let type = user_types[i]
+                if(i == 0){
+                        query = queryUtils.where('c_IntegrationRole', '=', type)
+                }else{
+                        query = query.or('c_IntegrationRole', '=', type)
+                }
+        }        
         restApi.query({
             type: 'User',
             fetch: fetch,
-            query: queryUtils.where('c_IntegrationRole', '!=', null).and('Disabled','=',false).and('CreationDate', '>', date),
+            query: query.and('Disabled','=',false).and('CreationDate', '>', date),
             scope: {
                workspace: refUtils.getRelative(workspace_ref)
             }
@@ -161,14 +131,15 @@ module.exports.createArtifact = (workspace_ref, artifact,  fetch, data) => {
 		    scope: {
 		        workspace: refUtils.getRelative(workspace_ref)
 		    }
-		}, function(error, result) {
+		}, function(error, permission) {
 		    if(error) {
 		        log.error(error);
+		        resolve(error);
 		    } else {
-		        resolve(result)
+		        resolve(permission)
 		    }
 		});
-	})
+	});
 }
 
 module.exports.getProjectsByCreationDate = (workspace_ref, fetch,  date) => {
@@ -176,7 +147,8 @@ module.exports.getProjectsByCreationDate = (workspace_ref, fetch,  date) => {
         restApi.query({
             type: 'Project',
             fetch: fetch,
-            query: queryUtils.where('CreationDate', '>', date),
+            query: queryUtils.where('CreationDate', '>', date).and('State','=','Open'),
+            order: 'CreationDate',
             scope: {
                workspace: refUtils.getRelative(workspace_ref)
             }
@@ -196,6 +168,8 @@ module.exports.getAllProjects = (workspace_ref, fetch) => {
         restApi.query({
             type: 'Project',
             fetch: fetch,
+            query: queryUtils.where('State','=','Open'),
+            order: 'CreationDate',
             scope: {
                workspace: refUtils.getRelative(workspace_ref)
             }
@@ -207,15 +181,4 @@ module.exports.getAllProjects = (workspace_ref, fetch) => {
             }
         });
     })
-}
-
-
-
-module.exports.goiya  = (text,timer) => {
-	new Promise(function(resolve) {
-		console.log('Yo',text,timer);
-		setTimeout(function() {
-			resolve(text);
-		}, timer);
-	})
 }
