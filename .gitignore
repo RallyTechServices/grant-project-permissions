@@ -8,3 +8,4 @@ app/__test*
 .grunt
 .npm
 set_env.sh
+test.js

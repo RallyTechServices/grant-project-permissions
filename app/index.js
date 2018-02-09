@@ -2,7 +2,9 @@ process.title = process.argv[2];
 var _ = require('lodash');
 
 const handler = require('./handler')
-const app_config = require('./config/app.json')
+const app = require('./config/app_config')
+const app_config = app.config
+
 var cron = require('node-cron');
 
 // log4js Logger
@@ -17,12 +19,25 @@ const run = () => {
 	d.setDate(d.getDate() - days);
 	console.log('Time (ISO) to check from ',d.toISOString(), 'Days Prior: ',days);
 
-	handler.processNewUserPermissions(d.toISOString()).then((x) => {
-		log.info(x);
+	if(app_config.newUsers && app_config.newTeams){
+		handler.processNewUserPermissions(d.toISOString()).then((x) => {
+			log.info(x);
+			handler.processNewProjectPermissions(d.toISOString()).then((x) => {
+				log.info(x);
+			});
+		});
+	}else if(app_config.newUsers){
+		handler.processNewUserPermissions(d.toISOString()).then((x) => {
+			log.info(x);
+		});
+	}else if(app_config.newTeams){
 		handler.processNewProjectPermissions(d.toISOString()).then((x) => {
 			log.info(x);
 		});
-	});
+	}else{
+		console.log('Nothing to do. Please set newUsers and/or newTeams to true to run the scripts');
+		log.info('Nothing to do. Please set newUsers and/or newTeams to true to run the scripts');
+	}
 
 }
 

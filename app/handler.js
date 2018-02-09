@@ -1,6 +1,7 @@
 const rally_utils = require('./common/rally_utils')
 var _ = require('lodash');
-const app_config = require('./config/app.json')
+const app = require('./config/app_config')
+const app_config = app.config
 
 var log = require('log4js').getLogger("handler");
 
@@ -30,9 +31,10 @@ module.exports.processNewProjectPermissions = (date) => {
 									var role = app_config.roles[user.c_IntegrationRole] && app_config.roles[user.c_IntegrationRole].access || null;
 									var exclude_restricted = app_config.roles[user.c_IntegrationRole] && app_config.roles[user.c_IntegrationRole].excludeRestricted || null;
 									if(role && !(exclude_restricted && _.includes(project._refObjectName.toLowerCase(), 'restricted'))){
-										data = {'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}	
+										//data = { 'ProjectPermission' :{'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}}
+										data = {'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}
 										data_array.push(data);
-										//data_array.push(rally_utils.createArtifact(workspace_ref, 'ProjectPermission',  true, data));
+										//data_array.push(rally_utils.createObject('ProjectPermission', data))
 									}
 								}
 							})
@@ -44,14 +46,13 @@ module.exports.processNewProjectPermissions = (date) => {
 								resolve("Permissions have been created to all the existing users for the newly created teams")
 							}).catch((error) => {
 								log.error(error)
-								reject()
 								//TODO: notify 
 							})
 
 					}else{
 						log.info('No action needed. Newly created projects:', results[0].TotalResultCount, ' Number of Users:',results[1].TotalResultCount)
 					}
-
+					resolve({})
 		}).catch((error) => {
 			log.error(error)
 			reject()
@@ -83,9 +84,10 @@ module.exports.processNewUserPermissions = (date) => {
 									var role = app_config.roles[user.c_IntegrationRole] && app_config.roles[user.c_IntegrationRole].access || null;
 									var exclude_restricted = app_config.roles[user.c_IntegrationRole] && app_config.roles[user.c_IntegrationRole].excludeRestricted || null;
 									if(role && !(exclude_restricted && _.includes(project._refObjectName.toLowerCase(), 'restricted'))){
-										data = {'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}	
+										//data = { 'ProjectPermission' :{'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}}
+										data = {'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}
 										data_array.push(data);
-										//data_array.push(rally_utils.createArtifact(workspace_ref, 'ProjectPermission',  true, data))
+										//data_array.push(rally_utils.createObject('ProjectPermission', data))
 									}
 								}
 							})
@@ -105,6 +107,7 @@ module.exports.processNewUserPermissions = (date) => {
 					}else{
 						log.info('No action needed. Newly created projects:', results[0].TotalResultCount, ' Number of Users:',results[1].TotalResultCount)
 					}
+					resolve({})
 
 		}).catch((error) => {
 			log.error(error)
@@ -123,6 +126,14 @@ const runSerialPermissions = (data_array,workspace_ref) => {
   })
   return result;
 }
+
+// const runSerialPermissions = (data_array,workspace_ref) => {
+//   var result = Promise.resolve();
+//   data_array.forEach(task => {
+//     result = result.then(() => task());
+//   });
+//   return result;
+// }
 
 function wait() {
     return new Promise(r => setTimeout(r, 1200))
