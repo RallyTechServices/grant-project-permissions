@@ -1,4 +1,5 @@
-//const app_config = require('../config/app.json')
+// const app = require('./config/app_config')
+// const app_config = app.config
 
 const log = require('log4js').getLogger("rally_utils");
 
@@ -9,6 +10,7 @@ const rally = require('rally'),
 
 const _ = require('lodash/core');
 
+//const rp = require('request-promise');
 
 module.exports.getArtifactByRef = (ref,fetch) => {
 	return new Promise((resolve, reject) => {
@@ -182,3 +184,41 @@ module.exports.getAllProjects = (workspace_ref, fetch) => {
         });
     })
 }
+
+
+// module.exports.createObject = (objectType, objectData) => {
+//     return new Promise((resolve, reject) => {
+
+//         var baseUrl = "https://rally1.rallydev.com/slm/webservice/v2.0/";
+//         var requestURL = baseUrl + objectType + "/create";
+//         var cookie_str =  "ZSESSIONID=" + process.env.RALLY_API_KEY + ';'    
+
+//         var headers = {
+//             cookie: cookie_str,
+//             ZSESSIONID: process.env.RALLY_API_KEY
+//         }
+
+//         var options = {
+//             method: 'POST',
+//             uri: requestURL,
+//             headers:  headers,
+//             body: objectData,
+//             json: true 
+//         };
+
+//         rp(options)
+//             .then(function (result) {
+//                 if(result.CreateResult.Errors.length == 0){
+//                     log.info('Done: ', result.CreateResult.Object & result.CreateResult.Object._refObjectName);
+//                 }else{
+//                     log.error("Error found",result.CreateResult.Errors);
+//                 }
+                
+//                 resolve(result)
+//             })
+//             .catch(function (err) {
+//                 console.log(error)
+//                 // API call failed...
+//             });
+//     });
+// }
