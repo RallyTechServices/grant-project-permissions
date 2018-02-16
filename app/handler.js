@@ -23,8 +23,8 @@ module.exports.processNewProjectPermissions = (date) => {
 					var data_array = [];
 					if(results[0].TotalResultCount > 0 && results[1].TotalResultCount > 0){
 						//log.info(results[0].Results,results[1].Results)
+					_.each(results[0].Results, function(project){
 						_.each(results[1].Results, function(user){
-							_.each(results[0].Results, function(project){
 								//sub admins and workspace admins have access to everything in this workspace. 
 								if(user.SubscriptionPermission !=  'Workspace Admin' && user.SubscriptionPermission !=  'Subscription Admin' ){
 									//log.info('roles config>>',app_config.roles,project);
@@ -76,8 +76,8 @@ module.exports.processNewUserPermissions = (date) => {
 					var data_array = [];
 					if(results[0].TotalResultCount > 0 && results[1].TotalResultCount > 0){
 						//log.info(results[0].Results,results[1].Results)
-						_.each(results[1].Results, function(user){
-							_.each(results[0].Results, function(project){
+						_.each(results[0].Results, function(project){
+							_.each(results[1].Results, function(user){
 								//sub admins and workspace admins have access to everything in this workspace. 
 								if(user.SubscriptionPermission !=  'Workspace Admin' && user.SubscriptionPermission !=  'Subscription Admin' ){
 									//log.info('roles config>>',app_config.roles,project);
@@ -87,7 +87,7 @@ module.exports.processNewUserPermissions = (date) => {
 										//data = { 'ProjectPermission' :{'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}}
 										data = {'User':user._ref, 'Project':project._ref, 'Workspace': workspace_ref, 'Role':role}
 										data_array.push(data);
-										//data_array.push(rally_utils.createObject('ProjectPermission', data))
+										//data_array.push(rally_utils.createObject('ProjectPermission ', data))
 									}
 								}
 							})
@@ -136,5 +136,5 @@ const runSerialPermissions = (data_array,workspace_ref) => {
 // }
 
 function wait() {
-    return new Promise(r => setTimeout(r, 1200))
+    return new Promise(r => setTimeout(r, 2000))
 }

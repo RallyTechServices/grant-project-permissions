@@ -80,6 +80,7 @@ module.exports.getIntegrationUsers = (workspace_ref, fetch, user_types) => {
         restApi.query({
             type: 'User',
             fetch: fetch,
+            limit: Infinity,
             query: query.and('Disabled','=',false),
                 scope: {
                    workspace: refUtils.getRelative(workspace_ref)
@@ -110,6 +111,7 @@ module.exports.getIntegrationUsersByCreationDate = (workspace_ref, fetch,date, u
         restApi.query({
             type: 'User',
             fetch: fetch,
+            limit: Infinity,
             query: query.and('Disabled','=',false).and('CreationDate', '>', date),
             scope: {
                workspace: refUtils.getRelative(workspace_ref)
@@ -135,7 +137,7 @@ module.exports.createArtifact = (workspace_ref, artifact,  fetch, data) => {
 		    }
 		}, function(error, permission) {
 		    if(error) {
-		        log.error(error);
+		        log.error(error,data);
 		        resolve(error);
 		    } else {
 		        resolve(permission)
@@ -149,6 +151,7 @@ module.exports.getProjectsByCreationDate = (workspace_ref, fetch,  date) => {
         restApi.query({
             type: 'Project',
             fetch: fetch,
+            limit: Infinity,
             query: queryUtils.where('CreationDate', '>', date).and('State','=','Open'),
             order: 'CreationDate',
             scope: {
@@ -170,6 +173,7 @@ module.exports.getAllProjects = (workspace_ref, fetch) => {
         restApi.query({
             type: 'Project',
             fetch: fetch,
+            limit: Infinity,
             query: queryUtils.where('State','=','Open'),
             order: 'CreationDate',
             scope: {
