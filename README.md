@@ -25,11 +25,11 @@ https://rally1.rallydev.com/slm/webservice/v2.0/workspace
 Change to the folder where the application is installed. On command line enter
 node app/index.js
 
-You can verify if the app is running using the log files located at <app-folder>/logs
+You can verify if the app is running using the log files located at app-folder/logs
 
 ### Configuration
 
-The application can be configured to using <app-folder>/app/config/app-config.js
+The application can be configured to using app-folder/app/config/app-config.js
 
 The configuration file looks like below.
 ```javascript
