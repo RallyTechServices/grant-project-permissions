@@ -10,7 +10,8 @@ const rally = require('rally'),
 
 const _ = require('lodash/core');
 
-//const rp = require('request-promise');
+const request = require('request');
+
 
 module.exports.getArtifactByRef = (ref,fetch) => {
 	return new Promise((resolve, reject) => {
@@ -189,40 +190,44 @@ module.exports.getAllProjects = (workspace_ref, fetch) => {
     })
 }
 
+module.exports.createBulkItems = (objectData) => {
+    return new Promise((resolve, reject) => {
+        //log.info('Batch payload',JSON.stringify(objectData) );
 
-// module.exports.createObject = (objectType, objectData) => {
-//     return new Promise((resolve, reject) => {
+        var baseUrl = "https://rally1.rallydev.com/slm/webservice/v2.0/";
+        var requestURL = baseUrl + "batch";
+        var cookie_str =  "ZSESSIONID=" + process.env.RALLY_API_KEY + ';'    
 
-//         var baseUrl = "https://rally1.rallydev.com/slm/webservice/v2.0/";
-//         var requestURL = baseUrl + objectType + "/create";
-//         var cookie_str =  "ZSESSIONID=" + process.env.RALLY_API_KEY + ';'    
+        var headers = {
+            cookie: cookie_str,
+            ZSESSIONID: process.env.RALLY_API_KEY
+        }
 
-//         var headers = {
-//             cookie: cookie_str,
-//             ZSESSIONID: process.env.RALLY_API_KEY
-//         }
+        var queryParameters = {
+            "shared":true,
+            "workspace": process.env.RALLY_WORKSPACE
+        }
 
-//         var options = {
-//             method: 'POST',
-//             uri: requestURL,
-//             headers:  headers,
-//             body: objectData,
-//             json: true 
-//         };
+        var options = {
+            method: 'POST',
+            qs: queryParameters,
+            uri: requestURL,
+            headers:  headers,
+            body: { "Batch" : objectData },
+            json: true,
+            jar: true
+        };
 
-//         rp(options)
-//             .then(function (result) {
-//                 if(result.CreateResult.Errors.length == 0){
-//                     log.info('Done: ', result.CreateResult.Object & result.CreateResult.Object._refObjectName);
-//                 }else{
-//                     log.error("Error found",result.CreateResult.Errors);
-//                 }
-                
-//                 resolve(result)
-//             })
-//             .catch(function (err) {
-//                 console.log(error)
-//                 // API call failed...
-//             });
-//     });
-// }
+        request.post(options, function(error, response, body){
+            if(error){
+                log.debug("Error>>>>>", JSON.stringify(error));
+                reject(error);
+            }else{
+                log.debug("HTTP Response code:", response.statusCode, "Errors:", body.BatchResult.Errors, "Warnings:", body.BatchResult.Warnings, "Total Updated: ", body.BatchResult.Results.length );
+                resolve(response)
+            }
+
+        });
+
+    });
+}

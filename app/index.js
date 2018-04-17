@@ -21,18 +21,18 @@ const run = () => {
 
 	if(app_config.newUsers && app_config.newTeams){
 		handler.processNewUserPermissions(d.toISOString()).then((x) => {
-			log.info(x);
+			log.info("processNewUserPermissions",x);
 			handler.processNewProjectPermissions(d.toISOString()).then((x) => {
-				log.info(x);
+				log.info("processNewProjectPermissions",x);
 			});
 		});
 	}else if(app_config.newUsers){
 		handler.processNewUserPermissions(d.toISOString()).then((x) => {
-			log.info(x);
+			log.info("processNewUserPermissions",x);
 		});
 	}else if(app_config.newTeams){
 		handler.processNewProjectPermissions(d.toISOString()).then((x) => {
-			log.info(x);
+			log.info("processNewProjectPermissions",x);
 		});
 	}else{
 		console.log('Nothing to do. Please set newUsers and/or newTeams to true to run the scripts');
