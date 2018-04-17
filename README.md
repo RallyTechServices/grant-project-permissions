@@ -27,6 +27,8 @@ node app/index.js
 
 You can verify if the app is running using the log files located at app-folder/logs
 
+This application uses the batch end point to create permissions. For more details - https://rally1.rallydev.com/slm/doc/webservice/bulk.jsp
+
 ### Configuration
 
 The application can be configured to using app-folder/app/config/app-config.js
@@ -34,6 +36,7 @@ The application can be configured to using app-folder/app/config/app-config.js
 The configuration file looks like below.
 ```javascript
 module.exports.config = {
+	"chunks":100, //number of permissions to create in one request. Do not change. If you get timeout issues, change it to smaller number.	
 	"runOnce":true, // Set true if you would like to run it once. false to set the cron timer
 	"cronTimer": "30 7 * * *", // set the timer see examples at https://crontab.guru/#30_7_*_*_*
 	"days":1, // number of days to look back. 
